@@ -108,7 +108,7 @@
 		 (push (aref v (- i 1)) lst)))
 	(remove-duplicates (reverse lst))))
 
-(precedes-int #\a "abracadabra") ;;=> (#\c #\d #\r)
+(precedes-it #\a "abracadabra") ;;=> (#\c #\d #\r)
 
 
 
@@ -121,9 +121,9 @@
 (defun intersperce-rec (sym lst)
     (if (null (cdr lst))
 	lst
-	(cons (car lst) (cons sym (intersperce sym (cdr lst))))))
+	(cons (car lst) (cons sym (intersperce-rec sym (cdr lst))))))
 
-(intersperce-rec '- '(a b c d))
+(intersperce-rec '- '(a b c d)) ;;=> (A - B - C - D)
 
 ;;   Итерация
 
@@ -140,7 +140,60 @@
 	    
 	      
 
-(intersperce-it '- '(a b c d e f))
+(intersperce-it '- '(a b c d e f)) ;;=> (A - B - C - D)
+
+
+
+
+;;6. Определите функцию, принимающую список чисел и возвращающую истину,
+;;   если разница между каждой последующей их парой равна 1.
+
+
+;;   Рекурсия
+(defun difference (lst)
+    (if (null (cdr lst))
+	t
+	(if (eql (- (car lst) (cadr lst)) 1)
+	    (difference (cdr lst)))))
+
+(difference '(6 5 4 3 2 1)) ;;=> T
+
+
+;;  do
+
+(defun difference-do (lst)
+    (do ((i lst (cdr i)))
+	((null (cdr i)) t)
+
+	(if (not (eql (- (car i) (cadr i)) 1))
+	    (return))))
+
+(difference-do '(6 5 4 3 2 1)) ;;=> T
+
+;;  mapcar и return
+
+(defun difference-mapc (lst)
+    (block nil
+	(mapc #'(lambda (x y)
+		    (when (not (= (- x y) 1))
+			(return)))
+	      lst
+	      (cdr lst))
+	t))
+
+(difference-mapc '(6 5 4 3 2 1)) ;;=> NIL
+
+
+
+
+
+	    
+	
+
+
+	
+	
+	
 
 
 
