@@ -186,14 +186,24 @@
 
 
 
+;;8. Определите одиночную рекурсивную функцию, которая возвращает
+;;   максимальный и минимальный элементы списка.
 
-	    
-	
+(defun min-max (vec)
+    (if (= (length vec) 1)
+	(values (svref vec 0)
+		(svref vec 0))
+	(values (multiple-value-bind (min max) 
+		    (if (< (svref vec 0) (svref vec 1))
+			(min-max (remove (svref vec 1) vec))
+			(min-max (subseq vec 1)))
+		    min)
+		(multiple-value-bind (min max) 
+		    (if (> (svref vec 0) (svref vec 1))
+			(min-max (remove (svref vec 1) vec))
+			(min-max (subseq vec 1)))
+		    max))))
+		
+		
 
-
-	
-	
-	
-
-
-
+(min-max #(45 3 -100 2 2 -100 2312 21 2312 )) ;;=> -100, 2312
