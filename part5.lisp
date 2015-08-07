@@ -207,9 +207,65 @@
 ;; (svrev vec 1) - второй элемент вектора
 ;; (subseq vec 1) - хвост вектора
 		
-		
-
 (min-max #(45 3 -100 2 2 -100 2312 21 2312)) ;;=> -100, 2312
 
 
 
+
+;;9. С помощью catch throw и без измените программу (рис 3.12) таким образом,
+;;   чтобы она возвращала первый найденный путь в сети сразу же после того, как он найден.
+
+;;catch trow:
+
+(defun shortest-path (start end net)
+    (catch 'bfs
+	(bfs end (list (list start)) net)))
+
+(defun bfs (end queue net)
+	(if (null queue)
+	    nil
+	    (let* ((path (car queue))
+		   (node (car path)))
+		(if (eql node end)
+		    (reverse path)
+		    (bfs end
+			 (append (cdr queue)
+				 (new-paths path node net end))
+			 net)))))
+
+(defun new-paths (path node net end)
+    (mapcar #'(lambda (n)
+		  (let ((new-path (cons n path)))
+		      (if (eql (car new-path) end)
+			  (throw 'bfs (reverse new-path))
+			  new-path)))
+	    (cdr (assoc node net))))
+
+(shortest-path 'a 'd '((a b c) (b c) (c d))) ;;=> (A B C D)
+
+
+;; без catch trow:
+(defun shortest-path (start end net)
+  (bfs end (list (list start)) net))
+
+(defun bfs (end queue net)
+    (if (null queue)
+	nil
+	(let ((path (car queue)))
+	    (let ((node (car path)))
+		(mapc #'(lambda (lst) 
+			    (print lst)
+			    (if (member end lst)
+				(return-from bfs (reverse lst))))
+		      queue)
+		(bfs end
+		     (append (cdr queue)
+			     (new-paths path node net))
+		     net)))))
+
+(defun new-paths (path node net)
+    (mapcar #'(lambda (n)
+		  (cons n path))
+            (cdr (assoc node net))))
+
+(shortest-path 'a 'd '((a b c) (b c) (c d))) ;;=> (A C D)
