@@ -241,7 +241,7 @@
 			  new-path)))
 	    (cdr (assoc node net))))
 
-(shortest-path 'a 'd '((a b c) (b c) (c d))) ;;=> (A B C D)
+(shortest-path 'a 'd '((a b c) (b c) (c d))) ;;=> (A C D)
 
 
 ;; без catch trow:
@@ -251,17 +251,16 @@
 (defun bfs (end queue net)
     (if (null queue)
 	nil
-	(let ((path (car queue)))
-	    (let ((node (car path)))
-		(mapc #'(lambda (lst) 
-			    (print lst)
-			    (if (member end lst)
-				(return-from bfs (reverse lst))))
-		      queue)
-		(bfs end
-		     (append (cdr queue)
-			     (new-paths path node net))
-		     net)))))
+	(let* ((path (car queue))
+	       (node (car path)))
+	    (mapc #'(lambda (lst) 
+			(print lst)
+			(if (member end lst)
+			    (return-from bfs (reverse lst))))
+		  queue)
+	    (bfs end
+		 (append (cdr queue) (new-paths path node net))
+		 net))))
 
 (defun new-paths (path node net)
     (mapcar #'(lambda (n)
