@@ -65,14 +65,14 @@
 ;;   следования элементов согласно исходным спискам.
 
 (defun new-union (lst1 lst2)
-    (if (null lst2)
-	lst1
-	(if (member (car lst2) lst1)
-	    (new-union lst1 (cdr lst2))
-	    (new-union (reverse (cons (car lst2) 
-				      (reverse lst1)))
-		       (cdr lst2)))))
- 
+  (if (null lst2)
+      lst1
+      (if (member (car lst2) lst1)
+	  (new-union lst1 (cdr lst2))
+	  (new-union (reverse (cons (car lst2) 
+				    (reverse lst1)))
+		     (cdr lst2)))))
+
 (new-union '(a b c) '(b a d)) ;; => (A B C D)
 
 
@@ -89,13 +89,13 @@
       0))
 
 (defun occur (lst)
-    (if lst
-	(cons 
-	 (cons (car lst) (count-elm (car lst) lst))
-	 (occur (remove (car lst) lst)))))
+  (if lst
+      (cons 
+       (cons (car lst) (count-elm (car lst) lst))
+       (occur (remove (car lst) lst)))))
 
 (defun occurrences (lst)
-    (sort (occur lst) #'> :key #'cdr))
+  (sort (occur lst) #'> :key #'cdr))
 
 (occurrences '(a b a d a c d c a)) ;;=> ((A . 4) (D . 2) (C . 2) (B . 1))
 
@@ -114,27 +114,27 @@
 
 ;;Рекурсия:
 (defun pos+ (lst)
-    (if lst
-	(reverse (cons (+ (car (reverse lst)) (length (cdr lst)))
-		       (reverse (pos+ (reverse (cdr (reverse lst)))))))))
+  (if lst
+      (reverse (cons (+ (car (reverse lst)) (length (cdr lst)))
+		     (reverse (pos+ (reverse (cdr (reverse lst)))))))))
 (pos+ '(7 5 1 4)) ;;=> (7 6 3 7)
 
 ;;Итерация
 (defun ipos+ (lst)
-    (let (new-lst)
-	(dotimes (i (length lst))
-	    (push (+ (nth i lst) i) new-lst))
-	(reverse new-lst)))
+  (let (new-lst)
+    (dotimes (i (length lst))
+      (push (+ (nth i lst) i) new-lst))
+    (reverse new-lst)))
 
 (ipos+ '(7 5 1 4)) ;;=> (7 6 3 7)
 
 ;;Mapcar
 
 (defun mappos+ (lst)
-    (let ((i -1))
-	(mapcar #'(lambda (elt)
-		      (+ (incf i) elt))
-		lst)))
+  (let ((i -1))
+    (mapcar #'(lambda (elt)
+		(+ (incf i) elt))
+	    lst)))
 
 (mappos+ '(7 5 1 4))
 
@@ -143,20 +143,20 @@
 ;;6. A
 
 (defun bad-cons (a b)
-    (let ((cns '(nil . nil)))
-	(setf (cdr cns) a)
-	(setf (car cns) b)
-	cns))
+  (let ((cns '(nil . nil)))
+    (setf (cdr cns) a)
+    (setf (car cns) b)
+    cns))
 
 (defun bad-cons_ (a b) ;; Альтернатива
-   `(,b . ,a))
+  `(,b . ,a))
 
 (bad-cons nil 'a) ;; => (A)
 
 ;;6. B
 
 (defun bad-list (&rest args)
-    (cons (cdr args) (car args)))
+  (cons (cdr args) (car args)))
 
 (bad-list 1 2 3 4 5) ;;=> ((2 3 4 5) . 1)
 
@@ -164,17 +164,17 @@
 (defun bad-length (lst)
   (if lst
       (+ 1 (bad-length (car (cons (cdr lst) (car lst)))))
-    0))
+      0))
 
 (bad-length '(a b c d)) ;=> 4
 
 ;;6. D
 
 (defun bad-member (obj lst)
-    (if lst
-	(if (eql (cdr (cons (cdr lst) (car lst))) obj)
-	    lst
-	    (bad-member obj (car (cons (cdr lst) (car lst)))))))
+  (if lst
+      (if (eql (cdr (cons (cdr lst) (car lst))) obj)
+	  lst
+	  (bad-member obj (car (cons (cdr lst) (car lst)))))))
 
 (bad-member 'c '(a b c d)) ;;=> (C D)
 
@@ -185,20 +185,20 @@
 ;;   Под "как можно меньше ячеек" подразумевается замена в n-elts (list n elt) на (cons n elt).
    
 (defun compress (lst)
-    (compr (car lst) 1 (cdr lst)))
- 
+  (compr (car lst) 1 (cdr lst)))
+
 (defun compr (fst n lst)
-    (if (null lst)
-	(cons (n-elts fst n) nil)
-	(let ((next (car lst)))
-	    (if (eql fst next)
-		(compr fst (1+ n) (cdr lst))
-		(cons (n-elts fst n) (compr next 1 (cdr lst)))))))
- 
+  (if (null lst)
+      (cons (n-elts fst n) nil)
+      (let ((next (car lst)))
+	(if (eql fst next)
+	    (compr fst (1+ n) (cdr lst))
+	    (cons (n-elts fst n) (compr next 1 (cdr lst)))))))
+
 (defun n-elts (elm n)
-    (if (> n 1)
-	(cons n elm)
-	elm))
+  (if (> n 1)
+      (cons n elm)
+      elm))
 
 (compress '(1 1 1 0 1 0 0 0 0 ))
 
@@ -239,7 +239,7 @@
 		(cons n path)))
 	  (cdr (assoc node net))))
 
-      
+
 (setf net '((a b c) (b a c f) (c a d)))
 
 (longest-path 'a 'd net) ;;=> (A B C D)
