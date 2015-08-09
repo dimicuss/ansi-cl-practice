@@ -47,7 +47,7 @@
 		(finder obj vec key test (+ mid 1) end)
 		obj)))))
 
-(write (bin-search 7 #(1 2 3 4 5 6 7))) ;;=> 7
+(bin-search 7 #(1 2 3 4 5 6 7)) ;;=> 7
 
 
 
@@ -77,7 +77,7 @@
                     max score))))
 	(values wins 
 		(most fn (remove wins lst))))))
-	
+
 (most #'length '((a b c) (a b c d) (h s d w 2 23 s) (e f g h s))) ;;=> (H S D W 2 23 S), (E F G H S)
 
 
@@ -91,7 +91,7 @@
       (let ((val (funcall fn x)))
         (if val (push val acc))))
     (nreverse acc)))
-  
+
 (defun owr-remove-if (fn lst)
   (filter #'(lambda (obj)
 	      (and (funcall fn obj) 
@@ -106,17 +106,59 @@
 ;;6. Определите функцию, принимающую одно число и возвращающую 
 ;;   наибольшее число из всех ранее полученных ею.
 
-
-(let ((lst nil))
+(let (data)
   (defun closure-most (n)
-    (car (sort (push n lst) #'>))))
+    (car (sort (push n data) #'>)))) ;; запускать в repl через load
 
+
+
+
+;;7. Определите функцию, принимающую одно число и возвращающую его же,
+;;   елсли оно больше числа, переданного этой функции н апредыдущем вызове.
+
+(let (data)
+  (defun more-than-prev (n)
+    (unless data
+      (push n data)
+      (return-from more-than-prev))
+    (cond 
+      ((> n (car data)) (car (push n data)))
+      (t (push n data)
+	 (return-from more-than-prev))))) ;; запукать в repl через load
+
+
+
+
+;;8. Определите функции expencive и frugal, так чтобы expencive и frugal
+;;   возвращали один и тот же результат при одинаковых аргументах, и так чтобы
+;;   функция frugal вызывала exencive если ей передается аргумент не 
+;;   передававщийся ранее.
+
+(defun expensive (n)
+  (and (>= n 0) (<= n 100)
+       (sqrt n)))
+
+(let (data)
+  (defun frugal (n)
+    (if (and (member n data)
+	     (>= n 0) (<= n 100))
+	(sqrt (car (push n data)))
+	(expencive (car (push n data)))))) ;; запускать в repl через load
+
+
+
+;;9. Определите функцию на подобие apply, но где все числа, которые можгут быть
+;;   напечатаны при ее выполнении, выводятся в восьмеричном формате (base 8).
+
+
+(defun owr-apply (fn lst)
+  (let ((*print-base* 8))
+    (print (reduce fn lst))))
+
+
+(owr-apply #'* '(1 2 3 4 5)) ;;=> 120, в repl => 170
     
-	  
-	      
-  
 
 
 
 
-	       
