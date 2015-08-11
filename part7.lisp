@@ -28,7 +28,11 @@
 	    (push expr acc))))
     (reverse acc)))
 
+<<<<<<< HEAD
 (list-exprs "test/expr.txt") ;;=> ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
+=======
+(list-exprs "test/expr.txt") ;; => ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
+>>>>>>> baa524c35241c654ea6f2d7418071760f93d6f91
 
 
 
@@ -49,6 +53,7 @@
 	  (format out "~A~%" line))))))
 
 (ign-comm "test/script.m" "test/script.m~~") ;;=> nil
+<<<<<<< HEAD
 
 
 (defun parse-array (arr)
@@ -71,4 +76,6 @@
 
 	    
 
+=======
+>>>>>>> baa524c35241c654ea6f2d7418071760f93d6f91
 
