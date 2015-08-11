@@ -28,7 +28,7 @@
 	    (push expr acc))))
     (reverse acc)))
 
-(list-exprs "test/expr.txt") ;; => => ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
+(list-exprs "test/expr.txt") ;;=> ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
 
 
 
@@ -48,5 +48,27 @@
 		     (eql (read-from-string line nil 'eof :end 1) '%))
 	  (format out "~A~%" line))))))
 
-(ign-comm "test/script.m" "test/script.m~~") ;;= nil
+(ign-comm "test/script.m" "test/script.m~~") ;;=> nil
+
+
+(defun parse-array (arr)
+  (let ((dim (array-dimensions arr)))
+    (dotimes (i (car dim))
+      (dotimes (j (- (cadr dim) 1)
+		  (format t "~10,2F~%" (aref arr i j)))
+	(format t "~10,2F" (aref arr i j))))))
+
+(parse-array #2A((1.34 2.122 3.56 4.12334 5.4323) 
+		 (1.34 2.122 3.56 4.12334 5.5643) 
+		 (1.34 2.122 3.56 4.12334 5.5643) 
+		 (1.34 2.122 3.56 4.12334 5.5643)
+		 (1.34 2.122 3.56 4.12334 5.5643))) ;;=> 1.34      2.12      3.56      4.12      5.43
+                                                    ;;   1.34      2.12      3.56      4.12      5.56
+                                                    ;;   1.34      2.12      3.56      4.12      5.56
+                                                    ;;   1.34      2.12      3.56      4.12      5.56
+                                                    ;;   1.34      2.12      3.56      4.12      5.56 in repl
+
+
+	    
+
 
