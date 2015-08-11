@@ -28,11 +28,7 @@
 	    (push expr acc))))
     (reverse acc)))
 
-<<<<<<< HEAD
 (list-exprs "test/expr.txt") ;;=> ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
-=======
-(list-exprs "test/expr.txt") ;; => ((+ 2 3 4) (APPLY FN ARGS) (/ 1 0) (/ 1 0))
->>>>>>> baa524c35241c654ea6f2d7418071760f93d6f91
 
 
 
@@ -53,8 +49,13 @@
 	  (format out "~A~%" line))))))
 
 (ign-comm "test/script.m" "test/script.m~~") ;;=> nil
-<<<<<<< HEAD
 
+
+
+
+;;4.Определите функцию, принимающую двумерный массив чисел с плавающей точкой,
+;;  и выводящую его аккуратными столбцами с 2-мя  знаками после запятой и 
+;;  пространстве в 10 знаков.
 
 (defun parse-array (arr)
   (let ((dim (array-dimensions arr)))
@@ -76,6 +77,5 @@
 
 	    
 
-=======
->>>>>>> baa524c35241c654ea6f2d7418071760f93d6f91
+
 
