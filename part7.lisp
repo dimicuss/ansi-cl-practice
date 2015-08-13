@@ -75,7 +75,44 @@
                                                     ;;   1.34      2.12      3.56      4.12      5.56 in repl
 
 
-	    
+;;5. Измените stream-subst так, чтобы она понимала шаблоны с 
+;;   метазнаком +. Если знак + встречается в строке old, он 
+;;   может соответствовать любому занку.
+
+
+(defun stream-subst (old new in out)
+  (let* ((pos 0)
+         (len (length old))
+         (buf (new-buf len))
+         (from-buf nil))
+    (do ((c (read-char in nil :eof)
+            (or (setf from-buf (buf-next buf))
+                (read-char in nil :eof))))
+        ((eql c :eof))
+      (cond ((or ;;Нужно добавить следующую строку
+	      (char= #\+ (char old pos)) 
+	      (char= c (char old pos)))
+	     (incf pos)
+
+	     (cond ((= pos len)           
+		    (princ new out)
+		    (setf pos 0)
+		    (buf-clear buf))
+		   ((not from-buf)         
+		    (buf-insert c buf)))
+
+	     ((zerop pos)                   
+	      (princ c out)
+	      (when from-buf
+		(buf-pop buf)
+		(buf-reset buf)))
+	     (t                             
+	      (unless from-buf
+		(buf-insert c buf))
+	      (princ (buf-pop buf) out)
+	      (buf-reset buf)
+	      (setf pos 0))))
+      (buf-flush buf out))))	    
 
 
 
