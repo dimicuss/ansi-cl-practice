@@ -89,30 +89,46 @@
             (or (setf from-buf (buf-next buf))
                 (read-char in nil :eof))))
         ((eql c :eof))
-      (cond ((or ;;Нужно добавить следующую строку
+      (cond ((or ;;Нужно добавить следующую строку 
 	      (char= #\+ (char old pos)) 
 	      (char= c (char old pos)))
 	     (incf pos)
-
+	     
 	     (cond ((= pos len)           
 		    (princ new out)
 		    (setf pos 0)
 		    (buf-clear buf))
 		   ((not from-buf)         
-		    (buf-insert c buf)))
+		    (buf-insert c buf))))
+	    
+	    ((zerop pos)                   
+	     (princ c out)
+	     (when from-buf
+	       (buf-pop buf)
+	       (buf-reset buf)))
+	    (t                             
+	     (unless from-buf
+	       (buf-insert c buf))
+	     (princ (buf-pop buf) out)
+	     (buf-reset buf)
+	     (setf pos 0))))
+    (buf-flush buf out)))	    
 
-	     ((zerop pos)                   
-	      (princ c out)
-	      (when from-buf
-		(buf-pop buf)
-		(buf-reset buf)))
-	     (t                             
-	      (unless from-buf
-		(buf-insert c buf))
-	      (princ (buf-pop buf) out)
-	      (buf-reset buf)
-	      (setf pos 0))))
-      (buf-flush buf out))))	    
+
+
+;;6. Измените функцию stream-sbst так, чтобы шаблон мог содержать
+;;   элемент, соответствующий: любой цивре, любой цифре и букве,
+;;   любому знаку. 
+;;   Заменить char= на temp-match в stream-subst.
+;;   А также в качестве шаблона использовать векторю. Например: #(!d a b b a t !dw !s)      
+
+(defun temp-match (c templ pos)
+  (let ((temp-symbol (svref templ pos)))
+    (case temp-symbol
+      (!d (digit-char-p c))
+      (!dw (or (alpha-char-p c) (digit-char-p c)))
+      (!s  (characterp c))
+      (t (equalp (char (string temp-symbol) 0) c)))))
 
 
 
