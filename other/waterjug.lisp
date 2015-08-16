@@ -1,34 +1,28 @@
 (defparameter *maxA* 8)
 (defparameter *maxB* 3)
-(defparameter *funcs* '(a->b b->a fullA fullB emptyA emptyB))
+(defparameter *funcs* '(a->b b->a fillA fillB emptyA emptyB))
 (defparameter *states* '((0 . 0)))
 
-(defun a->b (state)
-  (let* ((fulnsA (car state))
-	 (fulnsB (cdr state))
-	 (psblB (- *maxB* fulnsB))
-	 (nfulnsB nil))
-    (if (> (+ fulnsA fulnsB) *maxB*)
-	(setf nfulnsB *maxB*)
-	(setf nfulnsB (+ fulnsA fulnsB)))    
-    (setf fulnsA (- fulnsA (- nfulnsB fulnsB)))
-    (cons fulnsA nfulnsB)))
+(defun pourA (state)
+  (let* ((a (car state)) (b (cdr state)) (perm (- *maxA* a)))
+    (if (or (= b 0) (= a *maxA*))
+	state
+	(if (<= b perm)
+	    (cons (+ a b) 0)
+	    (cons (+ a perm) (- b perm))))))
 
-(defun b->a (state)
-  (let* ((fulnsB (cdr state))
-	 (fulnsA (car state))
-	 (psblA (- *maxA* fulnsA))
-	 (nfulnsA nil))
-    (if (> (+ fulnsA fulnsB) *maxA*)
-	(setf nfulnsA *maxA*)
-	(setf nfulnsA (+ fulnsA fulnsB)))    
-    (setf fulnsB (- fulnsB (- nfulnsA fulnsA)))
-    (cons nfulnsA fulnsB)))
+(defun pourB (state)
+  (let* ((a (car state)) (b (cdr state)) (perm (- *maxB* b)))
+    (if (or (= a 0) (= b *maxB*))
+	state
+	(if (<= a perm)
+	    (cons 0 (+ a b))
+	    (cons (- a perm) (+ b perm))))))
 
-(defun fullA (state)
+(defun fillA (state)
   (cons *maxA* (cdr state)))
 
-(defun fullB (state)
+(defun fillB (state)
   (cons (car state) *maxB*))
 
 (defun emptyA (state)
@@ -42,15 +36,19 @@
 	    (eql (cdr state) n))
     t))
 
-(defun solve ()
-  (dolist (fn *funcs* (unless (check (car *states*) 7) (solve)))
+(defun solve (n)
+  (dolist (fn *funcs* (unless (check (car *states*) n) (solve n)))
     (let ((state (funcall fn (car *states*))))
       (unless (member state *states* :test #'equal)
 	(push state *states*))
-      (when (check state 7)
+      (when (check state n)
 	(return *states*)))))
 
-(solve)
+(solve 7)
+
+
+
+
 
 
 
