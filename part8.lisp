@@ -137,5 +137,32 @@
 (file:file-subst "Test" "shit" "test/test.txt" "../new.txt")
 
 
+(in-package cl-user)
+
+;;5. Напиште программу, проверяющую, была ли
+;;   заданная цитата произведена с помощью Henley.
 
 
+
+(defun is-it-henley (pathname)
+  (with-open-file (s pathname :direction :input)
+    (let ((buffer (make-string maxword))          (pos 0))
+      (do ((c (read-char s nil :eof) 
+              (read-char s nil :eof)))
+          ((eql c :eof) t)
+        (cond ((or (alpha-char-p c) (char= c #\'))
+	       (setf (aref buffer pos) c)
+	       (incf pos))
+	      (t (let ((buffer-sym (intern (string-downcase 
+					    (subseq buffer 0 pos))))
+		       (p (punc c)))		   
+		   (unless (or (zerop pos)
+			       (and (gethash buffer-sym *words*)
+				    (if p 
+					(gethash p *words*)
+					t)))
+		     (return-from is-it-henley))
+		   (setf pos 0)))))))) ;;=> Перед вызовом нужно прочесть с помощью read-text исходный текст
+                                       ;;=> и создать *words* хэш таблицу с словами.
+
+  
