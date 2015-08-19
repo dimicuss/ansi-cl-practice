@@ -1,24 +1,24 @@
 (defparameter *maxA* 8)
 (defparameter *maxB* 3)
-(defparameter *funcs* '(pourA pourB fillA fillB emptyA emptyB))
+(defparameter *funcs* '(pour-a pour-b fill-a fill-b empty-a empty-b))
 (defparameter *states* '((0 . 0)))
 
 (defun action (fn state)
   (case fn
-    (pourA (let* ((a (car state)) (b (cdr state)) (perm (- *maxA* a)))
+    (pour-a (let* ((a (car state)) (b (cdr state)) (perm (- *maxA* a)))
 	      (cond ((or (= b 0) (= a *maxA*)) state)
 		    ((<= b perm) (cons (+ a b) 0))
 		    (t  (cons (+ a perm) (- b perm))))))
 
-    (pourB (let* ((a (car state)) (b (cdr state)) (perm (- *maxB* b)))
+    (pour-b (let* ((a (car state)) (b (cdr state)) (perm (- *maxB* b)))
 	      (cond ((or (= a 0) (= b *maxB*)) state)
 		    ((<= a perm) (cons 0 (+ a b)))
 		    (t (cons (- a perm) (+ b perm))))))
 
-    (emptyA  (cons 0 (cdr state)))
-    (emptyB (cons (car state) 0))
-    (fillA (cons *maxA* (cdr state)))
-    (fillB (cons (car state) *maxB*))))
+    (empty-a  (cons 0 (cdr state)))
+    (empty-b (cons (car state) 0))
+    (fill-a (cons *maxA* (cdr state)))
+    (fill-b (cons (car state) *maxB*))))
 
 (defun check (state n)
   (or (eql (car state) n) 
@@ -30,7 +30,23 @@
       (unless (member state *states* :test #'equal)
 	(push state *states*))
       (when (check state n)
+
 	(return *states*)))))
 
-(solve 7)
+
+
+
+(defun add-node (start-state) ;; добавить узел
+  (cons start-state
+	(remove start-state
+		(mapcar #'(lambda (fn)
+			    (action fn start-state))
+			*funcs*) :test #'equal)))
+
+(defun add-nodes (node) ;; добавить новые узлы на основе предыдущего
+  (mapcar #'(lambda (state)
+	      (add-node state))
+	  (cdr node)))
+
+		      
 
