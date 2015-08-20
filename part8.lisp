@@ -162,7 +162,24 @@
 					(gethash p *words*)
 					t)))
 		     (return-from is-it-henley))
-		   (setf pos 0)))))))) ;;=> Перед вызовом нужно прочесть с помощью read-text исходный текст
-                                       ;;=> и создать *words* хэш таблицу с словами.
+		   (setf pos 0)))))))) 
+
+;;  Перед вызовом нужно прочесть с помощью read-text исходный текст
+;;  и создать *words* хэш таблицу с словами.
 
   
+
+;;6. Напишите свою версию Henley, которая принимает слово и производит
+;;   предложение, в середине которого находится слово.
+;;   Заменить generate-text на функцию приведенную ниже.
+
+(defun generate-text (n word)
+  (let ((next (random-next '|.|))
+	(mid (ceiling n 2)))
+    (do ((i n (1- i)))
+	((zerop i) (terpri))
+      (if (= i mid)
+	  (format t "~A " word)
+	  (format t "~A " next))
+      (setf next (random-next next)))))
+      
