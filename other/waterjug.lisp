@@ -34,9 +34,9 @@
 	(return *states*)))))
 
 
+;;(solve 7)
 
-
-(defun add-node (start-state) ;; добавить узел
+#|(defun add-node (start-state) ;; добавить узел
   (cons start-state
 	(remove start-state
 		(mapcar #'(lambda (fn)
@@ -47,6 +47,29 @@
   (mapcar #'(lambda (state)
 	      (add-node state))
 	  (cdr node)))
+
+
+(defun filter (fn lst)
+  (if lst
+      (if (funcall fn (car lst))
+	  (filter fn (cdr lst))
+	  (cons (car lst) (filter fn (cdr lst))))))
+
+
+(filter #'evenp '(1 2 3 4 5 6 7))
+
+(defun map-simple (fn lst)
+  (if lst
+      (cons (funcall fn (car lst)) (map-simple fn (cdr lst)))))
+
+(map-simple #'oddp '(1 2 3 4 5 6 7))|#
+
+
+
+
+
+
+
 
 		      
 
