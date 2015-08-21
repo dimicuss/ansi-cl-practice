@@ -2,8 +2,10 @@
 (defparameter *maxB* 3)
 (defparameter *funcs* '(pour-a pour-b fill-a fill-b empty-a empty-b))
 (defparameter *states* '((0 . 0)))
+(defparameter *closed* nil)
 
 (defun action (fn state)
+  (unless state (return-from action))
   (case fn
     (pour-a (let* ((a (car state)) (b (cdr state)) (perm (- *maxA* a)))
 	      (cond ((or (= b 0) (= a *maxA*)) state)
@@ -66,10 +68,24 @@
 
 
 
+(defun breadth-first (goal)
+  (if *states*
+      (let ((state (car *states*)))
+	(cond ((check state goal) 'success)
+	      (t (push state *closed*)
+		 (setf *states* (append (cdr *states*)
+					(generate-descendants state *funcs*)))
+		 (breadth-first goal))))))
 
 
+(defun generate-descendants (state moves)
+  (if moves
+      (let ((child (action (car moves) state))
+	    (rest (generate-descendants state (cdr moves))))
+	(cond ((null child) rest)
+	      ((member child rest :test #'equal) rest)
+	      ((member child *states* :test #'equal) rest)
+	      ((member child *closed* :test #'equal) rest)
+	      (t (cons child rest))))))
 
-
-
-		      
-
+(breadth-first 7)
