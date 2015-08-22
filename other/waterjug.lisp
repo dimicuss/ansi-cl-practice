@@ -1,11 +1,10 @@
 (defparameter *maxA* 8)
 (defparameter *maxB* 3)
-(defparameter *funcs* '(pour-a pour-b fill-a fill-b empty-a empty-b))
 (defparameter *states* '((0 . 0)))
-(defparameter *closed* nil)
+(defparameter *funcs* '(pour-a pour-b fill-a fill-b empty-a empty-b))
 
 (defun action (fn state)
-  (unless state (return-from action))
+;  (unless state (return-from action))
   (case fn
     (pour-a (let* ((a (car state)) (b (cdr state)) (perm (- *maxA* a)))
 	      (cond ((or (= b 0) (= a *maxA*)) state)
@@ -32,50 +31,11 @@
       (unless (member state *states* :test #'equal)
 	(push state *states*))
       (when (check state n)
-
+	
 	(return *states*)))))
 
 
-;;(solve 7)
-
-#|(defun add-node (start-state) ;; добавить узел
-  (cons start-state
-	(remove start-state
-		(mapcar #'(lambda (fn)
-			    (action fn start-state))
-			*funcs*) :test #'equal)))
-
-(defun add-nodes (node) ;; добавить новые узлы на основе предыдущего
-  (mapcar #'(lambda (state)
-	      (add-node state))
-	  (cdr node)))
-
-
-(defun filter (fn lst)
-  (if lst
-      (if (funcall fn (car lst))
-	  (filter fn (cdr lst))
-	  (cons (car lst) (filter fn (cdr lst))))))
-
-
-(filter #'evenp '(1 2 3 4 5 6 7))
-
-(defun map-simple (fn lst)
-  (if lst
-      (cons (funcall fn (car lst)) (map-simple fn (cdr lst)))))
-
-(map-simple #'oddp '(1 2 3 4 5 6 7))|#
-
-
-
-(defun breadth-first (goal)
-  (if *states*
-      (let ((state (car *states*)))
-	(cond ((check state goal) 'success)
-	      (t (push state *closed*)
-		 (setf *states* (append (cdr *states*)
-					(generate-descendants state *funcs*)))
-		 (breadth-first goal))))))
+(solve 7)
 
 
 (defun generate-descendants (state moves)
@@ -87,5 +47,3 @@
 	      ((member child *states* :test #'equal) rest)
 	      ((member child *closed* :test #'equal) rest)
 	      (t (cons child rest))))))
-
-(breadth-first 7)
