@@ -59,3 +59,23 @@
               (k2 (/ (- (* dx3 dy1) (* dx1 dy3)) d)))
           (if (and (<= 0 k1 1) (<= 0 k2 1))
               (cons (+ x1 (* dx1 k1)) (+ y1 (* dy1 k1)))))))))
+
+
+
+
+;;;6. Реализуйте Метод Гарнера для решения полиномов.
+
+(defun garner (x &rest nums)
+  (if (cdr nums)
+      (+ (* x (apply #'garner (cons x (reverse (cdr (reverse nums)))))) 
+	 (car (last nums)))
+      (car nums)))
+
+(garner 8 6 4 3 1) ;;=> 3353
+
+(defun reduce-garner (x &rest args) ;;как альтернатива
+  (reduce #'(lambda (a b)
+	      (+ (* x a) b))
+	  args))
+
+(reduce-garner 8 6 4 3 1) ;;=> 3353
