@@ -44,26 +44,44 @@
     
 
 	  
-;;4 Украдено у shido.
+;;4. Украдено у shido.
 
 (defun isec (x1 y1 x2 y2 x3 y3 x4 y4)
-  (let ((dx1 (- x2 x1))
-        (dy1 (- y2 y1))
-        (dx2 (- x4 x3))
-        (dy2 (- y4 y3))
-        (dx3 (- x3 x1))
-        (dy3 (- y3 y1)))
-    (let ((d (- (* dx1 dy2) (* dx2 dy1))))
-      (unless (= d 0)
-        (let ((k1 (/ (- (* dx3 dy2) (* dx2 dy3)) d))
-              (k2 (/ (- (* dx3 dy1) (* dx1 dy3)) d)))
-          (if (and (<= 0 k1 1) (<= 0 k2 1))
-              (cons (+ x1 (* dx1 k1)) (+ y1 (* dy1 k1)))))))))
+  (let* ((dx1 (- x2 x1))
+	 (dy1 (- y2 y1))
+	 (dx2 (- x4 x3))
+	 (dy2 (- y4 y3))
+	 (dx3 (- x3 x1))
+	 (dy3 (- y3 y1))
+	 (d (- (* dx1 dy2) (* dx2 dy1))))
+    (unless (= d 0)
+      (let ((k1 (/ (- (* dx3 dy2) (* dx2 dy3)) d))
+	    (k2 (/ (- (* dx3 dy1) (* dx1 dy3)) d)))
+	(if (and (<= 0 k1 1) (<= 0 k2 1))
+	    (cons (+ x1 (* dx1 k1)) (+ y1 (* dy1 k1))))))))
 
 
 
 
-;;;6. Реализуйте Метод Гарнера для решения полиномов.
+;;5. Реализуйте метод бисекции для поиска числа i при том, что f(i) = 0.
+
+(defun bisection (f min max eps)
+  (let* ((mid (/ (+ max min) 2))
+	 (fmax (funcall f max))
+	 (fmin (funcall f min))
+	 (fmid (funcall f mid)))
+    (cond ((> (* fmax fmin) 0) "error")
+	  ((or (< (- max min) eps) (= fmid 0)) mid)
+	  ((< (* fmin fmid) 0) (bisection f min mid eps))
+	  (t (bisection f mid max eps)))))
+	  
+	     
+(bisection #'(lambda (x) (- (+ (* x x) (* 2 x)) 1)) -2 5 0.001)
+
+
+
+
+;;6. Реализуйте Метод Гарнера для решения полиномов.
 
 (defun garner (x &rest nums)
   (if (cdr nums)
@@ -73,9 +91,34 @@
 
 (garner 8 6 4 3 1) ;;=> 3353
 
-(defun reduce-garner (x &rest args) ;;как альтернатива
+(defun reduce-garner (x &rest nums) ;;как альтернатива
   (reduce #'(lambda (a b)
 	      (+ (* x a) b))
-	  args))
+	  nums))
 
 (reduce-garner 8 6 4 3 1) ;;=> 3353
+
+
+
+
+;;7. Сколько бит использовала бы ваша реализация для предствавления
+;;   fixnum
+
+(log most-positive-fixnum 2) ;;=> 48.0 бит в clisp
+
+
+
+
+;;8. Сколько различных типов чисел с плавающей запятой представлено
+;;   в вашей реализации.
+
+;;   В clisp представленно всего четыре типа: short-float, 
+;;   single-float, double-float, long float.
+;;   http://www.clisp.org/impnotes/num-concepts.html
+
+
+
+
+
+
+
