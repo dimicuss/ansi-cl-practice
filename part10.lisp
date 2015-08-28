@@ -31,9 +31,13 @@
 ;;   возвращать значение n-го выражение.
 
 (defmacro nth-expr (n &body body)
-  (let ((gsym (gensym)))
-    `(let ((,gsym ,n))
-       
+  `(case ,n
+     ,@(let ((key 0))
+	 (mapcar #'(lambda (exp)
+		     `(,(incf key) ,exp))
+		 body))))
 
-(let ((n 1))
-  (nth-expr n (/ 1 0) (+ 1 2) (/ 1 0)))
+
+(let ((n 2))
+  (nth-expr n (/ 1 0) (+ 1 2) (/ 1 0))) ;;=> 3
+
