@@ -75,3 +75,53 @@
 
 (let ((i 0) (n 4))
   (n-of n (incf i))) ;;=> (1 2 3 4)
+
+
+
+
+;;6.
+
+(defmacro owr-let (varlst &body body)
+  `((lambda ,varlst ,@body) ,@varlst))
+
+(setf x nil
+      y nil
+      z nil)
+
+(owr-let (x y z)
+	 (setf x t)
+	 (setf y t)
+	 (setf z t))
+
+x ;;=> nil
+y ;;=> nil
+z ;;=> nil
+
+
+
+
+;;7.
+
+(defmacro opush (obj lst)
+  `(setf ,lst (cons ,obj ,lst)))
+
+(setf x #(1 2 3))
+(setf y #(1 2 3))
+(setf i 0)
+(setf j 0)
+
+(push 1 (aref x (incf i))) ;; => (1 . 2)
+
+(opush 1 (aref y (incf j))) ;; => (1 . 3)
+
+
+
+
+;;8.
+
+(define-modify-macro double ()
+  (lambda (var) (* var 2)))
+
+(let ((x 4))
+  (double x)
+  x) ;;=> 8
