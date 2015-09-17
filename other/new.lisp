@@ -1,14 +1,42 @@
-(defun evc (m n)
-  (if (< m n) 
-      (evc n m)
-      (let ((p (mod m n)))
-	(if (> p 0)
-	    (evc n p)
-	    n))))
-	
-
-(evc 18 18)
+(load "quicklisp/setup.lisp")
+(ql:quickload 'cl-opengl)
+(ql:quickload 'cl-glu)
+(ql:quickload 'lispbuilder-sdl)
 
 
-	
-      
+
+(defun draw-triangle (x1 y1 x2 y2 x3 y3)
+  (sdl:draw-line-* x1 y1 x2 y2)
+  (sdl:draw-line-* x2 y2 x3 y3)
+  (sdl:draw-line-* x3 y3 x1 y1))
+
+(defun serpynsky (x1 y1 x2 y2 x3 y3 n)
+  (let ((nx1 (ceiling (+ x1 x2) 2))
+	(ny1 (ceiling (+ y1 y2) 2))
+	(nx2 (ceiling (+ x2 x3) 2))
+	(ny2 (ceiling (+ y2 y3) 2))
+	(nx3 (ceiling (+ x3 x1) 2))
+	(ny3 (ceiling (+ y3 y1) 2)))
+    (when (> n 0)
+      (draw-triangle nx1 ny1 nx2 ny2 nx3 ny3)
+      (serpynsky x1 y1 nx1 ny1 nx3 ny3 (- n 1))
+      (serpynsky nx1 ny1 x2 y2 nx2 ny2 (- n 1))
+      (serpynsky nx3 ny3 nx2 ny2 x3 y3 (- n 1)))))
+
+
+(sdl:with-init ()
+  (sdl:window 1000 1000 :title-caption "Serpynsky" :icon-caption "Serpynsky")
+  (setf (sdl:frame-rate) 5)
+  (sdl:clear-display (sdl:color :r 0 :g 0 :b 0))
+  
+  (sdl:with-surface (surf sdl:*default-display*)
+    (sdl:with-color (col (sdl:color :r 255 :g 100 :b 70))
+      (draw-triangle 100 900 500 100 900 900)
+      (serpynsky 100 900 500 100 900 900 8)))
+  (sdl:update-display)
+  (sdl:with-events ()
+    (:quit-event () t)
+    (:key-down-event (:key key)
+		     (if (sdl:key= key :SDL-KEY-ESCAPE)
+			 (sdl:push-quit-event)))
+    (:video-expose-event () (sdl:update-display))))
