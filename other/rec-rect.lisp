@@ -1,0 +1,13 @@
+(draw-rectangle-* 0 900 900 900)
+
+(defun draw-rects (x y a b) 
+  (let ((crAx (- x (ceilibg a 2)))
+        (crAy (- y b))
+        (crBx (- x (ceiling a 2)))
+        (crBy (- y (ceiling b 2)))
+        (crCx (+ x a))
+        (crCy (+ y (ceiling b 2)))
+        (crDx (+ x a))
+        (crDy (+ y b)))
+    (draw-rectangle-* crAx crAy (ceiling a 2) (ceiling b 2))
+    (draw-rectangle-* crAx crAy (ceiling a 2) (ceiling b 2))
