@@ -1,3 +1,8 @@
+(load "quicklisp/setup.lisp")
+(ql:quickload 'cl-opengl)
+(ql:quickload 'cl-glu)
+(ql:quickload 'lispbuilder-sdl)
+
 (defun draw-rects (x y a b n) 
   (let ((crAx (- x (/ a 2)))
         (crAy (- y b))
@@ -16,11 +21,25 @@
     (draw-rects crBx crBy (ceiling a 2) (ceiling b 2) (- n 1))
     (draw-rects crCx crCy (ceiling a 2) (ceiling b 2) (- n 1))
     (draw-rects crDx crDy (ceiling a 2) (ceiling b 2) (- n 1))))
-    
-    
-    
-(draw-rectangle-* 0 900 900 900)
-(draw-cects 0 900 900 900 5)
+
+
+
+(sdl:with-init ()
+  (sdl:window 1000 1000 :title-caption "Serpynsky" :icon-caption "Serpynsky")
+  (setf (sdl:frame-rate) 5)
+  (sdl:clear-display (sdl:color :r 0 :g 0 :b 0))
+  
+  (sdl:with-surface (surf sdl:*default-display*)
+    (sdl:with-color (col (sdl:color :r 255 :g 100 :b 70))
+        (draw-rectangle-* 0 900 900 900)
+        (draw-cects 0 900 900 900 5)
+  (sdl:update-display)
+  (sdl:with-events ()
+    (:quit-event () t)
+    (:key-down-event (:key key)
+		     (if (sdl:key= key :SDL-KEY-ESCAPE)
+			 (sdl:push-quit-event)))
+    (:video-expose-event () (sdl:update-display))))
 
 
     
