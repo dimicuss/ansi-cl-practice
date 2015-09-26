@@ -4,29 +4,46 @@
 (ql:quickload 'lispbuilder-sdl)
 
 (defun draw-rects (x y a b n)
+  (let ((crAx (- x (ceiling a 2)))
+	(crAy (+ y b))
+	(crBx (- x (ceiling a 2)))
+	(crBy (- y (ceiling b 2)))
+	(crCx (+ x a))
+	(crCy (- y (ceiling b 2)))
+	(crDx (+ x a))
+	(crDy (+ y b)))
+    (sdl:draw-rectangle-* crAx crAy (ceiling a 2) (ceiling b 2))
+    (sdl:draw-rectangle-* crBx crBy (ceiling a 2) (ceiling b 2))
+    (sdl:draw-rectangle-* crCx crCy (ceiling a 2) (ceiling b 2))
+    (sdl:draw-rectangle-* crDx crDy (ceiling a 2) (ceiling b 2))
+    
+    (rec-draw crAx crAy (ceiling a 2) (ceiling b 2) x y (- n 1))
+    (rec-draw crBx crBy (ceiling a 2) (ceiling b 2) x y (- n 1))
+    (rec-draw crCx crCy (ceiling a 2) (ceiling b 2) x y (- n 1))
+    (rec-draw crDx crDy (ceiling a 2) (ceiling b 2) x y (- n 1))))
+
+(defun rec-draw (x y a b olx oly n)
   (when (> n 0)
-    (let ((crAx (- x (ceiling a 2)))
-	  (crAy (+ y b))
-	  (crBx (- x (ceiling a 2)))
-	  (crBy (- y (ceiling b 2)))
-	  (crCx (+ x a))
-	  (crCy (- y (ceiling b 2)))
-	  (crDx (+ x a))
-	  (crDy (+ y b)))
-      (sdl:draw-rectangle-* crAx crAy (ceiling a 2) (ceiling b 2))
-      (sdl:draw-rectangle-* crBx crBy (ceiling a 2) (ceiling b 2))
-      (sdl:draw-rectangle-* crCx crCy (ceiling a 2) (ceiling b 2))
-      (sdl:draw-rectangle-* crDx crDy (ceiling a 2) (ceiling b 2))
-      
-      (draw-rects crAx crAy (ceiling a 2) (ceiling b 2) (- n 1))
-      (draw-rects crBx crBy (ceiling a 2) (ceiling b 2) (- n 1))
-      (draw-rects crCx crCy (ceiling a 2) (ceiling b 2) (- n 1))
-      (draw-rects crDx crDy (ceiling a 2) (ceiling b 2) (- n 1)))))
+    (let ((cords (list (cons (- x (ceiling a 2))
+			     (+ y b))
+		       (cons (- x (ceiling a 2))
+			     (- y (ceiling b 2)))
+		       (cons (+ x a)
+			     (- y (ceiling b 2)))
+		       (cons (+ x a)
+			     (+ y b)))))
+      (mapc #'(lambda (cord)
+		(unless (and (<= olx (car cord) (+ olx (* a 2)))
+			     (<= oly (cdr cord) (+ oly (* b 2))))
+		  (sdl:draw-rectangle-* (car cord) (cdr cord) (ceiling a 2) (ceiling b 2))
+		  (rec-draw (car cord) (cdr cord) (ceiling a 2) (ceiling b 2) x y (- n 1))))
+	    cords))))
+	      
 
 
 
 (sdl:with-init ()
-  (sdl:window 1000 1000 :title-caption "qyuadrant" :icon-caption "quadrant")
+  (sdl:window 1000 1000 :title-caption "quadrant" :icon-caption "quadrant")
   (setf (sdl:frame-rate) 5)
   (sdl:clear-display (sdl:color :r 0 :g 0 :b 0))
   
@@ -41,8 +58,3 @@
 		     (if (sdl:key= key :SDL-KEY-ESCAPE)
 			 (sdl:push-quit-event)))
     (:video-expose-event () (sdl:update-display))))
-
-
-
-    
-    
