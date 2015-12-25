@@ -1,4 +1,3 @@
-(load "quicklisp/setup.lisp")
 (ql:quickload 'cl-opengl)
 (ql:quickload 'cl-glu)
 (ql:quickload 'lispbuilder-sdl)
