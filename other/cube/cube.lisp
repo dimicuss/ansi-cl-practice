@@ -7,7 +7,6 @@
 (load "cube.rubik.lisp")
 
 
-
 (let* ((size 800)
        (colors #1a((209/255 17/255 65/255)
 		   (0 177/255 89/255)
@@ -23,7 +22,6 @@
 					     (:sdl-gl-depth-size 16)))
   (gl:viewport 0 0 size size)
   (setf (sdl:frame-rate) 60)
-  
   
   (gl:matrix-mode :projection)
   (gl:load-identity)
@@ -46,20 +44,38 @@
   (sdl:update-display)
 
 
-  (sdl:with-events (:poll)
+  (sdl:with-events ()
    (:quit-event () t)
+
+   
+   (:key-down-event ()
+		    (with-key-events (1 2 3 4 5 6)))
+   
    (:video-expose-event () (sdl:update-display))
+
+   
    (:idle
-    (gl:clear :color-buffer :depth-buffer)
-    (draw-rubik rubik)
-    (sdl:update-display)
-    (rotate-graphics (+ 1 (random 7)) rubik)))))
+    (when (sdl:get-key-state :sdl-key-left)
+     (gl:clear :depth-buffer :color-buffer)
+      (gl:rotate -3 0 1 0)
+      (draw-rubik rubik)
+      (sdl:update-display))
+    (when (sdl:get-key-state :sdl-key-right)
+      (gl:clear :depth-buffer :color-buffer)
+      (gl:rotate 3 0 1 0)
+      (draw-rubik rubik)
+      (sdl:update-display))
+    (when (sdl:get-key-state :sdl-key-up)
+      (gl:clear :depth-buffer :color-buffer)
+      (gl:rotate 3 1 0 0)
+      (draw-rubik rubik)
+      (sdl:update-display))
+    (when (sdl:get-key-state :sdl-key-down)
+      (gl:clear :depth-buffer :color-buffer)
+      (gl:rotate -3 1 0 0)
+      (draw-rubik rubik)
+      (sdl:update-display))))))
 
 
 
-  
-  
-  
-  
 
-      

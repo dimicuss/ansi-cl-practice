@@ -113,7 +113,7 @@
 
 
 (defmethod rotate-graphics (n (this rubik-cube))
- (let* ((j 360)
+ (let* ((j 720)
 	(k (/ j 90)))
   (case n
     
@@ -126,7 +126,7 @@
        (embeded-do ((x 0 2) (y 0 1) (z 0 2))
 	(draw-trans x y z (aref (cubes this) x y z))))
       
-      (rotate-all)
+      
       
       (with-matrix
        (gl:rotate (/ i k) 0 1 0)
@@ -153,7 +153,7 @@
        (embeded-do ((x 0 2) (y 1 2) (z 0 2))
 	(draw-trans x y z (aref (cubes this) x y z))))
       
-      (rotate-all)
+      
 
       (with-matrix
        (gl:rotate (/ i k) 0 1 0)
@@ -180,7 +180,7 @@
        (embeded-do ((x 1 2) (y 0 2) (z 0 2))
 	(draw-trans x y z (aref (cubes this) x y z))))
 
-      (rotate-all)
+      
 
       (with-matrix
        (gl:rotate (/ i k) 1 0 0)
@@ -207,7 +207,7 @@
        (embeded-do ((x 0 1) (y 0 2) (z 0 2))
 	(draw-trans x y z (aref (cubes this) x y z))))
 
-      (rotate-all)
+      
       
       (with-matrix
        (gl:rotate (/ i k) 1 0 0)
@@ -234,7 +234,7 @@
        (embeded-do ((x 0 2) (y 0 2) (z 0 1))
 	(draw-trans x y z (aref (cubes this) x y z))))
       
-      (rotate-all)
+      
       
       (with-matrix
        (gl:rotate (/ i k) 0 0 1)
@@ -261,7 +261,7 @@
        (embeded-do ((x 0 2) (y 0 2) (z 1 2))
 	(draw-trans x y z (aref (cubes this) x y z))))
 
-      (rotate-all)
+      
       
       (with-matrix
        (gl:rotate (/ i k) 0 0 1)
@@ -276,16 +276,3 @@
      (gl:clear :color-buffer :depth-buffer)
      (draw-rubik this)
      (sdl:update-display)))))
-     
-     
-
-
-    
-
-       
-   	
- 
- 
-
-	
-   
