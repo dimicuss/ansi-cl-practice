@@ -8,8 +8,22 @@
   (and (atom s) (not (constantp s))))
 
 
+(defun constant-p ( s )  
+  (cond ((not s) t)
+	
+	((and (atom s) (constantp s)) t)
+	
+	((listp s)
+	 (let ((elm (constant-p (car s)))
+	       (rest (constant-p (cdr s))))
+	   (if (not (and elm rest)) nil t)))
+	       
+	   
+	(t (return-from constant-p nil))))
+
+
 (defun apply-subst ( subst sequence )
-  (cond ((not sequence) (return-from apply-subst) )
+  (cond ((not sequence) nil)
    
 	((atom sequence)
 	 (if (eq (cdr subst) sequence)
@@ -32,9 +46,9 @@
     
 
 (defun unify ( e1 e2 )
-  (cond ((or (and (null e1)      (null e2))
-	     (and (constantp e1) (constantp e2)))
-	 (if (not (eql e1 e2)) 'fail))
+  (cond ((or (and (null e1)       (null e2))
+	     (and (constant-p e1) (constant-p e2)))
+	 (if (not (equal e1 e2)) 'fail))
 
 	
 	((variablep e1)
@@ -57,13 +71,10 @@
 		  (subs1 (unify he1 he2)))
 	     
 	     (if (eql subs1 'fail) 'fail
-	       (let* ((te1 (apply-subst subs1 (cdr e1)))
-		      (te2 (apply-subst subs1 (cdr e2))))
-		 (print subs1)
-		 (print te1)
-		 (print te2)
-		 (setf subs2 (unify te1 te2))
-
+	       (let* ((te1   (apply-subst subs1 (cdr e1)))
+		      (te2   (apply-subst subs1 (cdr e2)))
+		      (subs2 (unify te1 te2)))
+		 
 	   
 		 (if (eql subs2 'fail) 'fail
 		   (composition subs1 subs2))))))))
@@ -73,12 +84,17 @@
 
 
 
-(defconstant bill    'bill)
-(defconstant parents 'parents)
-(defconstant father  'father)
-(defconstant mother  'mother)
+(defconstant ancestor 'ancestor)
+(defconstant father   'father)
+(defconstant david    'david)
+(defconstant george   'george)
 
-(print (unify '(parents x (father x) (mother bill)) '(parents bill (father bill) y)))
+
+
+
+(print (unify '(ancestor x x) '(ancestor david george)))
+
+
 
 		  
 	       
